@@ -2,38 +2,71 @@
 <style>
       #map-canvas {
         height: 200px;
-        width: 30%;
+        width: 100%;
         margin: 0px;
         padding: 5px;
-        display: none
+        bottom: 0px;
       }
     </style>
 
 <script>
 jQuery(document).ready(function(){
-    jQuery('#show-map').click(function(){
-        jQuery('#map-canvas').toggle();
-    });
+    // jQuery('#show-map').click(function(){
+    //     jQuery('#map-canvas').toggle();
+    // });
+    // $(".map-toggle").click(function(){
+    //   $(".map").slideToggle();
+
+  function mouseOn(){
+    var height = $(this).find('.bottom').height() + 200;
+    $(this).find('.bottom').animate({bottom:height}, 400).fadeTo(200, 1);
+    $(this).find('.top').fadeTo(200, .2);
+  }
+  
+  function mouseOff(){
+    $(this).find('.bottom').animate({bottom:0}, 400).fadeTo(200, 0);
+    $(this).find('.top').fadeTo(200, 1);
+  }
+  
+  $('#hover-map').hover(mouseOn,mouseOff);
+
+  // $('#hover2').hover(function(){
+  //   $(this).find('.front').fadeTo(200,0.2);
+  // },function(){
+  //   $(this).find('.front').fadeTo(200,1);
+  // });
+
 });
+
+
 </script>
+
+<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+
 
 <div class="container">
   <div class="row">
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
       <h1 id="title">The sun is currently setting in...</h1>
       <figure>
-        <input type="image"  id="sunset" class="img-responsive center-block" src="<%= @photo.sunset_by_lat_lon %>" onClick="window.location.reload()">
-          <figcaption><p id="toggle-map" class="text-left"><%= @photo.location.titleize %><p><p class="text-right">by <a href ="<%=@photo.photo_url%>"><%= @photo.author %></a></p></figcaption>
+        <div id="hover-map">
+          <img src="<%= @photo.sunset_by_lat_lon %>" id="sunset" class="top img-responsive center-block">
+          <!-- <input type="image"  id="sunset" class="img-responsive center-block" src="<%= @photo.sunset_by_lat_lon %>" onClick="window.location.reload()"> -->
+          <div class = "map col-lg-8 bottom" id="map-canvas"></div>
+       </div>
+          <figcaption><p id="toggle-map" class="text-left map-toggle"><%= @photo.location.titleize %><p><p class="text-right">by <a href ="<%=@photo.photo_url%>"><%= @photo.author %></a></p></figcaption>
      </figure>
     </div>
   </div>
+  
 </div>
+  
 
-<script src="https://maps.googleapis.com/maps/api/js?v=3.exp"></script>
+
 <script>
 function initialize() {
 var latitude = <%= @photo.latitude %>;
-var longitude = <%= @photo.longitude%>;
+var longitude = <%= @photo.longitude %>;
 var markerTitle = '<%= @photo.location.titleize %>';
   var myLatlng = new google.maps.LatLng(latitude,longitude);
   var mapOptions = {
@@ -51,9 +84,6 @@ var markerTitle = '<%= @photo.location.titleize %>';
 
 google.maps.event.addDomListener(window, 'load', initialize);
 </script>
-    <input type='button' class = "btn btn-primary btn-sm" id='show-map' value='Where?'>
-      <div id="map-canvas"></div>
-</html>
 
 
 
