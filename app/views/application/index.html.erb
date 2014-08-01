@@ -6,11 +6,13 @@
         margin: 0px;
         padding: 5px;
         bottom: 0px;
+        display: none;
       }
     </style>
 
 <script>
 jQuery(document).ready(function(){
+
     // jQuery('#show-map').click(function(){
     //     jQuery('#map-canvas').toggle();
     // });
@@ -18,13 +20,15 @@ jQuery(document).ready(function(){
     //   $(".map").slideToggle();
 
   function mouseOn(){
+
     var height = $(this).find('.bottom').height() + 200;
+    $('#map-canvas').show();
     $(this).find('.bottom').animate({bottom:height}, 400).fadeTo(200, 1);
     $(this).find('.top').fadeTo(200, .2);
   }
   
   function mouseOff(){
-    $(this).find('.bottom').animate({bottom:0}, 400).fadeTo(200, 0);
+    $(this).find('.bottom').animate({bottom:200}, 400).fadeTo(200, 0).hide();
     $(this).find('.top').fadeTo(200, 1);
   }
   
@@ -60,30 +64,52 @@ jQuery(document).ready(function(){
   </div>
   
 </div>
-  
-
 
 <script>
-function initialize() {
-var latitude = <%= @photo.latitude %>;
-var longitude = <%= @photo.longitude %>;
-var markerTitle = '<%= @photo.location.titleize %>';
-  var myLatlng = new google.maps.LatLng(latitude,longitude);
-  var mapOptions = {
-    zoom: 3,
-    center: myLatlng
+  var mapAdded = false
+  function displayMap() {
+    document.getElementById('map-canvas').style.display="block";
+    initialize();
   }
-  var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
-  var marker = new google.maps.Marker({
-      position: myLatlng,
-      map: map,
-      title: markerTitle
-  });
-}
+    function initialize() {
+      var latitude = <%= @photo.latitude %>;
+      var longitude = <%= @photo.longitude %>;
+      var markerTitle = '<%= @photo.location.titleize %>';
+      var myLatlng = new google.maps.LatLng(latitude,longitude);
+      var mapOptions = {
+      zoom: 3,
+      center: myLatlng
+    }
+    var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
-google.maps.event.addDomListener(window, 'load', initialize);
+    var marker = new google.maps.Marker({
+        position: myLatlng,
+        map: map,
+        title: markerTitle
+    });
+    mapAdded = true;
+    }
+
+    function addMap() {
+        google.maps.event.addDomListener(window, 'load', displayMap);
+      }
+
+    addMap();
+
+    var check = function(){
+      if(mapAdded == true){
+        $('#map-canvas').hide();
+        console.log("hidden");
+      }else{
+        setTimeout(check, 500);
+        console.log("waiting");
+      }
+    }
+    check();
+
 </script>
+
 
 
 
